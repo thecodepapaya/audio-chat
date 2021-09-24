@@ -122,13 +122,13 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text("00:00"),
+              const Text("00:00"),
               FlowShader(
                 child: const Text("Slide to cancel"),
                 duration: const Duration(seconds: 3),
                 flowColors: const [Colors.white, Colors.grey],
               ),
-              SizedBox(width: size),
+              const SizedBox(width: size),
             ],
           ),
         ),

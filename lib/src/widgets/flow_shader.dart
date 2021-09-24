@@ -33,52 +33,33 @@ class _FlowShaderState extends State<FlowShader>
       vsync: this,
       duration: widget.duration,
     );
-    animation1 = TweenSequence([
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.last, end: widget.flowColors.first),
-        weight: 1,
+    final TweenSequenceItem seqbw = TweenSequenceItem(
+      tween: ColorTween(
+        begin: widget.flowColors.last,
+        end: widget.flowColors.first,
       ),
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.first, end: widget.flowColors.last),
-        weight: 1,
+      weight: 1,
+    );
+    final TweenSequenceItem seqwb = TweenSequenceItem(
+      tween: ColorTween(
+        begin: widget.flowColors.first,
+        end: widget.flowColors.last,
       ),
-    ]).animate(
+      weight: 1,
+    );
+    animation1 = TweenSequence([seqbw, seqwb]).animate(
       CurvedAnimation(
         parent: controller,
         curve: const Interval(0.0, 0.45, curve: Curves.linear),
       ),
     );
-    animation2 = TweenSequence([
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.last, end: widget.flowColors.first),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.first, end: widget.flowColors.last),
-        weight: 1,
-      ),
-    ]).animate(
+    animation2 = TweenSequence([seqbw, seqwb]).animate(
       CurvedAnimation(
         parent: controller,
         curve: const Interval(0.15, 0.75, curve: Curves.linear),
       ),
     );
-    animation3 = TweenSequence([
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.last, end: widget.flowColors.first),
-        weight: 1,
-      ),
-      TweenSequenceItem(
-        tween: ColorTween(
-            begin: widget.flowColors.first, end: widget.flowColors.last),
-        weight: 1,
-      ),
-    ]).animate(
+    animation3 = TweenSequence([seqbw, seqwb]).animate(
       CurvedAnimation(
         parent: controller,
         curve: const Interval(0.45, 1, curve: Curves.linear),
