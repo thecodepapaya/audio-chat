@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,10 @@ class _RecordButtonState extends State<RecordButton> {
   late Animation<double> buttonScaleAnimation;
   late Animation<double> timerAnimation;
   late Animation<double> lockerAnimation;
+
+  DateTime? startTime;
+  Timer? timer;
+  String recordDuration = "00:00";
 
   @override
   void initState() {
@@ -114,7 +120,7 @@ class _RecordButtonState extends State<RecordButton> {
         width: timerWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Globals.borderRadius),
-          color: Colors.transparent,
+          color: Colors.black,
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -122,7 +128,7 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              const Text("00:00"),
+              Text(recordDuration),
               FlowShader(
                 child: const Text("Slide to cancel"),
                 duration: const Duration(seconds: 3),
@@ -159,6 +165,9 @@ class _RecordButtonState extends State<RecordButton> {
         debugPrint("onLongPressEnd");
         widget.controller.reverse();
         debugPrint(details.localPosition.toString());
+        startTime = null;
+        recordDuration = "00:00";
+        timer?.cancel();
       },
       onLongPressCancel: () {
         debugPrint("onLongPressCancel");
@@ -166,6 +175,16 @@ class _RecordButtonState extends State<RecordButton> {
       },
       onLongPress: () {
         debugPrint("onLongPress");
+        startTime = DateTime.now();
+        timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          final minDur = DateTime.now().difference(startTime!).inMinutes;
+          final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
+          String min = minDur < 10 ? "0$minDur" : minDur.toString();
+          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+          setState(() {
+            recordDuration = "$min:$sec";
+          });
+        });
       },
     );
   }
