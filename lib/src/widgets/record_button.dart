@@ -16,7 +16,7 @@ class RecordButton extends StatefulWidget {
 }
 
 class _RecordButtonState extends State<RecordButton> {
-  final double size = 55;
+  static const double size = 55;
 
   final double lockerHeight = 200;
   double timerWidth = 0;
@@ -114,7 +114,23 @@ class _RecordButtonState extends State<RecordButton> {
         width: timerWidth,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Globals.borderRadius),
-          color: Colors.black,
+          color: Colors.transparent,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Text("00:00"),
+              FlowShader(
+                child: const Text("Slide to cancel"),
+                duration: const Duration(seconds: 3),
+                flowColors: const [Colors.white, Colors.grey],
+              ),
+              SizedBox(width: size),
+            ],
+          ),
         ),
       ),
     );
@@ -139,9 +155,10 @@ class _RecordButtonState extends State<RecordButton> {
         debugPrint("onLongPressDown");
         widget.controller.forward();
       },
-      onLongPressEnd: (_) {
+      onLongPressEnd: (details) {
         debugPrint("onLongPressEnd");
         widget.controller.reverse();
+        debugPrint(details.localPosition.toString());
       },
       onLongPressCancel: () {
         debugPrint("onLongPressCancel");

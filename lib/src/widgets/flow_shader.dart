@@ -6,11 +6,14 @@ class FlowShader extends StatefulWidget {
     required this.child,
     this.duration = const Duration(seconds: 2),
     this.direction = Axis.horizontal,
-  }) : super(key: key);
+    this.flowColors = const <Color>[Colors.white, Colors.black],
+  })  : assert(flowColors.length == 2),
+        super(key: key);
 
   final Widget child;
   final Axis direction;
   final Duration duration;
+  final List<Color> flowColors;
 
   @override
   _FlowShaderState createState() => _FlowShaderState();
@@ -32,11 +35,13 @@ class _FlowShaderState extends State<FlowShader>
     );
     animation1 = TweenSequence([
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.black, end: Colors.white),
+        tween: ColorTween(
+            begin: widget.flowColors.last, end: widget.flowColors.first),
         weight: 1,
       ),
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.white, end: Colors.black),
+        tween: ColorTween(
+            begin: widget.flowColors.first, end: widget.flowColors.last),
         weight: 1,
       ),
     ]).animate(
@@ -47,11 +52,13 @@ class _FlowShaderState extends State<FlowShader>
     );
     animation2 = TweenSequence([
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.black, end: Colors.white),
+        tween: ColorTween(
+            begin: widget.flowColors.last, end: widget.flowColors.first),
         weight: 1,
       ),
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.white, end: Colors.black),
+        tween: ColorTween(
+            begin: widget.flowColors.first, end: widget.flowColors.last),
         weight: 1,
       ),
     ]).animate(
@@ -62,11 +69,13 @@ class _FlowShaderState extends State<FlowShader>
     );
     animation3 = TweenSequence([
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.black, end: Colors.white),
+        tween: ColorTween(
+            begin: widget.flowColors.last, end: widget.flowColors.first),
         weight: 1,
       ),
       TweenSequenceItem(
-        tween: ColorTween(begin: Colors.white, end: Colors.black),
+        tween: ColorTween(
+            begin: widget.flowColors.first, end: widget.flowColors.last),
         weight: 1,
       ),
     ]).animate(
