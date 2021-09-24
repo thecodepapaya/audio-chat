@@ -11,7 +11,19 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,10 +34,10 @@ class _HomePageState extends State<HomePage> {
             Expanded(child: Container()),
             Row(
               mainAxisSize: MainAxisSize.max,
-              children: const [
-                ChatBox(),
-                SizedBox(width: 4),
-                RecordButton(),
+              children: [
+                ChatBox(controller: controller),
+                const SizedBox(width: 4),
+                RecordButton(controller: controller),
               ],
             ),
           ],

@@ -1,20 +1,51 @@
-import 'package:audio_chat/src/widgets/record_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-class ChatBox extends StatelessWidget {
-  const ChatBox({Key? key}) : super(key: key);
+class ChatBox extends StatefulWidget {
+  const ChatBox({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
+
+  final AnimationController controller;
+
+  @override
+  State<ChatBox> createState() => _ChatBoxState();
+}
+
+class _ChatBoxState extends State<ChatBox> {
+  late Animation animation;
+
+  @override
+  void initState() {
+    super.initState();
+    animation = ColorTween(begin: Colors.red, end: Colors.blue).animate(
+      CurvedAnimation(
+        parent: widget.controller,
+        curve: const Interval(
+          0.4,
+          1,
+          curve: Curves.ease,
+        ),
+      ),
+    );
+    widget.controller.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
+        height: 50,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25),
-          color: Colors.black,
+          // color: Colors.black,
+          color: animation.value,
         ),
         child: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 15),
+          padding: EdgeInsets.symmetric(horizontal: 20),
           child: TextField(
             maxLines: null,
             decoration: InputDecoration(
