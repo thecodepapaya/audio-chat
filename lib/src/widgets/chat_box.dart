@@ -15,24 +15,9 @@ class ChatBox extends StatefulWidget {
 }
 
 class _ChatBoxState extends State<ChatBox> {
-  late Animation animation;
-
   @override
   void initState() {
     super.initState();
-    animation = ColorTween(begin: Colors.red, end: Colors.blue).animate(
-      CurvedAnimation(
-        parent: widget.controller,
-        curve: const Interval(
-          0.4,
-          1,
-          curve: Curves.ease,
-        ),
-      ),
-    );
-    widget.controller.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
@@ -43,7 +28,6 @@ class _ChatBoxState extends State<ChatBox> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Globals.borderRadius),
           color: Colors.black,
-          // color: animation.value,
         ),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),

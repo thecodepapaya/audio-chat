@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({
@@ -30,6 +33,7 @@ class _RecordButtonState extends State<RecordButton> {
   DateTime? startTime;
   Timer? timer;
   String recordDuration = "00:00";
+  late Record record;
 
   @override
   void initState() {
@@ -66,6 +70,12 @@ class _RecordButtonState extends State<RecordButton> {
         curve: const Interval(0.2, 0.8, curve: Curves.elasticInOut),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    record.dispose();
+    super.dispose();
   }
 
   @override
@@ -161,31 +171,61 @@ class _RecordButtonState extends State<RecordButton> {
         debugPrint("onLongPressDown");
         widget.controller.forward();
       },
-      onLongPressEnd: (details) {
+      onLongPressEnd: (details) async {
         debugPrint("onLongPressEnd");
         widget.controller.reverse();
         debugPrint(details.localPosition.toString());
         startTime = null;
         recordDuration = "00:00";
         timer?.cancel();
+        if (isCancelled(details.localPosition)) {
+          debugPrint("Cancelled recording");
+          var filePath = await record.stop();
+          debugPrint(filePath);
+          File(filePath!).delete();
+          debugPrint("Deleted $filePath");
+        } else if (isLocked(details.localPosition)) {
+          debugPrint("Locked recording");
+        } else {
+          var filePath = await Record().stop();
+          debugPrint(filePath);
+        }
       },
       onLongPressCancel: () {
         debugPrint("onLongPressCancel");
         widget.controller.reverse();
       },
-      onLongPress: () {
+      onLongPress: () async {
         debugPrint("onLongPress");
-        startTime = DateTime.now();
-        timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-          final minDur = DateTime.now().difference(startTime!).inMinutes;
-          final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
-          String min = minDur < 10 ? "0$minDur" : minDur.toString();
-          String sec = secDur < 10 ? "0$secDur" : secDur.toString();
-          setState(() {
-            recordDuration = "$min:$sec";
+        if (await Record().hasPermission()) {
+          record = Record();
+          await record.start(
+            path: (await getApplicationDocumentsDirectory()).path +
+                "/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+            encoder: AudioEncoder.AAC,
+            bitRate: 128000,
+            samplingRate: 44100,
+          );
+          startTime = DateTime.now();
+          timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+            final minDur = DateTime.now().difference(startTime!).inMinutes;
+            final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
+            String min = minDur < 10 ? "0$minDur" : minDur.toString();
+            String sec = secDur < 10 ? "0$secDur" : secDur.toString();
+            setState(() {
+              recordDuration = "$min:$sec";
+            });
           });
-        });
+        }
       },
     );
+  }
+
+  bool isLocked(Offset offset) {
+    return (offset.dy < -85 && offset.dy > -135);
+  }
+
+  bool isCancelled(Offset offset) {
+    return (offset.dx < -200);
   }
 }
