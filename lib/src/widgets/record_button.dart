@@ -1,3 +1,4 @@
+import 'package:audio_chat/src/globals.dart';
 import 'package:flutter/material.dart';
 
 class RecordButton extends StatefulWidget {
@@ -13,18 +14,22 @@ class RecordButton extends StatefulWidget {
 }
 
 class _RecordButtonState extends State<RecordButton> {
-  double size = 50;
-  double scale = 1.0;
+  final double size = 55;
 
-  late Animation buttonScaleAnimation;
+  final double lockerHeight = 200;
+  double timerWidth = 0;
+
+  late Animation<double> buttonScaleAnimation;
+  late Animation<double> timerAnimation;
+  late Animation<double> lockerAnimation;
 
   @override
   void initState() {
     super.initState();
-    buttonScaleAnimation = Tween<double>(begin: 1, end: 1.7).animate(
+    buttonScaleAnimation = Tween<double>(begin: 1, end: 2).animate(
       CurvedAnimation(
         parent: widget.controller,
-        curve: const Interval(0.0, 0.2, curve: Curves.ease),
+        curve: const Interval(0.0, 0.6, curve: Curves.elasticInOut),
       ),
     );
     widget.controller.addListener(() {
@@ -33,40 +38,103 @@ class _RecordButtonState extends State<RecordButton> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    timerWidth =
+        MediaQuery.of(context).size.width - 2 * Globals.defaultPadding - 4;
+    timerAnimation =
+        Tween<double>(begin: timerWidth + Globals.defaultPadding, end: 0)
+            .animate(
+      CurvedAnimation(
+        parent: widget.controller,
+        curve: const Interval(0.4, 1, curve: Curves.easeIn),
+      ),
+    );
+    lockerAnimation =
+        Tween<double>(begin: lockerHeight + Globals.defaultPadding, end: 0)
+            .animate(
+      CurvedAnimation(
+        parent: widget.controller,
+        curve: const Interval(0.4, 1, curve: Curves.elasticInOut),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
+      clipBehavior: Clip.none,
       children: [
-        GestureDetector(
-          child: Transform.scale(
-            scale: buttonScaleAnimation.value,
-            child: Container(
-              child: const Icon(Icons.mic),
-              height: size,
-              width: size,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).primaryColor,
-              ),
-            ),
-          ),
-          onLongPressDown: (_) {
-            debugPrint("onLongPressDown");
-            widget.controller.forward();
-          },
-          onLongPressEnd: (_) {
-            debugPrint("onLongPressEnd");
-            widget.controller.reverse();
-          },
-          onLongPressCancel: () {
-            debugPrint("onLongPressCancel");
-            widget.controller.reverse();
-          },
-          onLongPress: () {
-            debugPrint("onLongPress");
-          },
-        ),
+        lockSlider(),
+        timerSlider(context),
+        // audioButton(),
       ],
+    );
+  }
+
+  Widget lockSlider() {
+    return Positioned(
+      // bottom: -lockerAnimation.value,
+      child: Container(
+          height: lockerHeight,
+          width: size,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Globals.borderRadius),
+            color: Colors.black,
+          ),
+          alignment: Alignment.topCenter,
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          child: AnimatedIcon(
+            icon: AnimatedIcons.add_event,
+            progress: lockerAnimation,
+          )),
+    );
+  }
+
+  Widget timerSlider(BuildContext context) {
+    return Positioned(
+      right: -timerAnimation.value,
+      child: Container(
+        height: size,
+        width: timerWidth,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget audioButton() {
+    return GestureDetector(
+      child: Transform.scale(
+        scale: buttonScaleAnimation.value,
+        child: Container(
+          child: const Icon(Icons.mic),
+          height: size,
+          width: size,
+          clipBehavior: Clip.hardEdge,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
+      ),
+      onLongPressDown: (_) {
+        debugPrint("onLongPressDown");
+        widget.controller.forward();
+      },
+      onLongPressEnd: (_) {
+        debugPrint("onLongPressEnd");
+        widget.controller.reverse();
+      },
+      onLongPressCancel: () {
+        debugPrint("onLongPressCancel");
+        widget.controller.reverse();
+      },
+      onLongPress: () {
+        debugPrint("onLongPress");
+      },
     );
   }
 }

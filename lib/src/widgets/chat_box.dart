@@ -1,3 +1,4 @@
+import 'package:audio_chat/src/globals.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
@@ -38,11 +39,11 @@ class _ChatBoxState extends State<ChatBox> {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        height: 50,
+        height: 55,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
-          // color: Colors.black,
-          color: animation.value,
+          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          color: Colors.black,
+          // color: animation.value,
         ),
         child: const Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),

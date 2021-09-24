@@ -1,3 +1,4 @@
+import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/chat_box.dart';
 import 'package:audio_chat/src/widgets/record_button.dart';
 import 'package:flutter/material.dart';
@@ -20,15 +21,22 @@ class _HomePageState extends State<HomePage>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      // duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 1),
     );
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(Globals.defaultPadding),
         child: Column(
           children: [
             Expanded(child: Container()),
