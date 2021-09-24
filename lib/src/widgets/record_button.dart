@@ -1,5 +1,7 @@
 import 'package:audio_chat/src/globals.dart';
+import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RecordButton extends StatefulWidget {
   const RecordButton({
@@ -76,18 +78,31 @@ class _RecordButtonState extends State<RecordButton> {
     return Positioned(
       // bottom: -lockerAnimation.value,
       child: Container(
-          height: lockerHeight,
-          width: size,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(Globals.borderRadius),
-            color: Colors.black,
-          ),
-          alignment: Alignment.topCenter,
-          padding: const EdgeInsets.symmetric(vertical: 15),
-          child: AnimatedIcon(
-            icon: AnimatedIcons.add_event,
-            progress: lockerAnimation,
-          )),
+        height: lockerHeight,
+        width: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          color: Colors.black,
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            const FaIcon(FontAwesomeIcons.lock, size: 20),
+            const SizedBox(height: 8),
+            FlowShader(
+              direction: Axis.vertical,
+              child: Column(
+                children: const [
+                  Icon(Icons.keyboard_arrow_up),
+                  Icon(Icons.keyboard_arrow_up),
+                  Icon(Icons.keyboard_arrow_up),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
