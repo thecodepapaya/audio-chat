@@ -4,11 +4,13 @@ class FlowShader extends StatefulWidget {
   const FlowShader({
     Key? key,
     required this.child,
+    this.duration = const Duration(seconds: 2),
     this.direction = Axis.horizontal,
   }) : super(key: key);
 
   final Widget child;
   final Axis direction;
+  final Duration duration;
 
   @override
   _FlowShaderState createState() => _FlowShaderState();
@@ -26,7 +28,7 @@ class _FlowShaderState extends State<FlowShader>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: widget.duration,
     );
     animation1 = TweenSequence([
       TweenSequenceItem(

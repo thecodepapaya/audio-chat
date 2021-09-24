@@ -57,7 +57,7 @@ class _RecordButtonState extends State<RecordButton> {
             .animate(
       CurvedAnimation(
         parent: widget.controller,
-        curve: const Interval(0.4, 1, curve: Curves.elasticInOut),
+        curve: const Interval(0.2, 0.8, curve: Curves.elasticInOut),
       ),
     );
   }
@@ -69,14 +69,14 @@ class _RecordButtonState extends State<RecordButton> {
       children: [
         lockSlider(),
         timerSlider(context),
-        // audioButton(),
+        audioButton(),
       ],
     );
   }
 
   Widget lockSlider() {
     return Positioned(
-      // bottom: -lockerAnimation.value,
+      bottom: -lockerAnimation.value,
       child: Container(
         height: lockerHeight,
         width: size,
