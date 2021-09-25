@@ -34,6 +34,7 @@ class _RecordButtonState extends State<RecordButton> {
   Timer? timer;
   String recordDuration = "00:00";
   late Record record;
+  bool isLocked = false;
 
   @override
   void initState() {
@@ -75,6 +76,7 @@ class _RecordButtonState extends State<RecordButton> {
   @override
   void dispose() {
     record.dispose();
+    timer?.cancel();
     super.dispose();
   }
 
@@ -84,8 +86,9 @@ class _RecordButtonState extends State<RecordButton> {
       clipBehavior: Clip.none,
       children: [
         lockSlider(),
-        timerSlider(context),
+        cancelSlider(),
         audioButton(),
+        if (isLocked) timerLocked(),
       ],
     );
   }
@@ -122,7 +125,7 @@ class _RecordButtonState extends State<RecordButton> {
     );
   }
 
-  Widget timerSlider(BuildContext context) {
+  Widget cancelSlider() {
     return Positioned(
       right: -timerAnimation.value,
       child: Container(
@@ -152,6 +155,58 @@ class _RecordButtonState extends State<RecordButton> {
     );
   }
 
+  Widget timerLocked() {
+    return Positioned(
+      right: 0,
+      child: Container(
+        height: size,
+        width: timerWidth,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(Globals.borderRadius),
+          color: Colors.black,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 15, right: 25),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () async {
+              var filePath = await Record().stop();
+              AudioState.files.add(filePath!);
+              Globals.audioListKey.currentState!
+                  .insertItem(AudioState.files.length - 1);
+              debugPrint(filePath);
+              setState(() {
+                isLocked = false;
+              });
+              startTime = null;
+              recordDuration = "00:00";
+              timer?.cancel();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(recordDuration),
+                FlowShader(
+                  child: const Text("Tap lock to stop"),
+                  duration: const Duration(seconds: 3),
+                  flowColors: const [Colors.white, Colors.grey],
+                ),
+                const Center(
+                  child: FaIcon(
+                    FontAwesomeIcons.lock,
+                    size: 18,
+                    color: Colors.green,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget audioButton() {
     return GestureDetector(
       child: Transform.scale(
@@ -174,19 +229,25 @@ class _RecordButtonState extends State<RecordButton> {
       onLongPressEnd: (details) async {
         debugPrint("onLongPressEnd");
         widget.controller.reverse();
-        debugPrint(details.localPosition.toString());
-        startTime = null;
-        recordDuration = "00:00";
-        timer?.cancel();
+
         if (isCancelled(details.localPosition)) {
+          startTime = null;
+          recordDuration = "00:00";
+          timer?.cancel();
           debugPrint("Cancelled recording");
           var filePath = await record.stop();
           debugPrint(filePath);
           File(filePath!).delete();
           debugPrint("Deleted $filePath");
-        } else if (isLocked(details.localPosition)) {
+        } else if (checkIsLocked(details.localPosition)) {
           debugPrint("Locked recording");
+          setState(() {
+            isLocked = true;
+          });
         } else {
+          startTime = null;
+          recordDuration = "00:00";
+          timer?.cancel();
           var filePath = await Record().stop();
           AudioState.files.add(filePath!);
           Globals.audioListKey.currentState!
@@ -224,7 +285,7 @@ class _RecordButtonState extends State<RecordButton> {
     );
   }
 
-  bool isLocked(Offset offset) {
+  bool checkIsLocked(Offset offset) {
     return (offset.dy < -85 && offset.dy > -135);
   }
 
