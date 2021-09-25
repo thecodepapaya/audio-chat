@@ -12,3 +12,21 @@ The project makes use of the following open source packages
 - [path_provider](https://pub.dev/packages/path_provider) - path_provider provides path to application document and cache storage directories to store application specific data.
 - [record](https://pub.dev/packages/record) - Audio recorder from microphone to a given file path with multiple codecs, bit rate and sampling rate options.
 
+## Build and run locally
+
+Clone the repo 
+ 
+```
+git clone https://github.com/thecodepapaya/audio-chat.git
+```
+
+Build and run locally 
+```
+cd audio_chat
+flutter run
+```
+## Releases
+
+Checkout the [releases section](https://github.com/thecodepapaya/audio-chat/releases/latest) for the latest APK from the code.
+
+
