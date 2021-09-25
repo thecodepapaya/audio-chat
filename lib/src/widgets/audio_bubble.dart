@@ -26,11 +26,6 @@ class _AudioBubbleState extends State<AudioBubble> {
   }
 
   @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -43,7 +38,7 @@ class _AudioBubbleState extends State<AudioBubble> {
               height: 45,
               padding: const EdgeInsets.only(left: 12, right: 18),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(Globals.borderRadius),
+                borderRadius: BorderRadius.circular(Globals.borderRadius - 10),
                 color: Colors.black,
               ),
               child: Column(
@@ -105,7 +100,9 @@ class _AudioBubbleState extends State<AudioBubble> {
                                     children: [
                                       Text(
                                         prettyDuration(
-                                            snapshot.data ?? Duration.zero),
+                                            snapshot.data! == Duration.zero
+                                                ? duration ?? Duration.zero
+                                                : snapshot.data!),
                                         style: const TextStyle(
                                           fontSize: 10,
                                           color: Colors.grey,
