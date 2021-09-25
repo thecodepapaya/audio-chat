@@ -1,3 +1,4 @@
+import 'package:audio_chat/src/audio_list.dart';
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/chat_box.dart';
 import 'package:audio_chat/src/widgets/record_button.dart';
@@ -21,7 +22,6 @@ class _HomePageState extends State<HomePage>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      // duration: const Duration(seconds: 2),
       duration: const Duration(seconds: 1),
     );
   }
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage>
         padding: const EdgeInsets.all(Globals.defaultPadding),
         child: Column(
           children: [
-            Expanded(child: Container()),
+            const Expanded(child: AudioList()),
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
