@@ -27,6 +27,12 @@ class _FlowShaderState extends State<FlowShader>
   late Animation animation3;
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     controller = AnimationController(

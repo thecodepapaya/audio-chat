@@ -77,6 +77,7 @@ class _RecordButtonState extends State<RecordButton> {
   void dispose() {
     record.dispose();
     timer?.cancel();
+    timer = null;
     super.dispose();
   }
 
@@ -171,6 +172,10 @@ class _RecordButtonState extends State<RecordButton> {
             behavior: HitTestBehavior.opaque,
             onTap: () async {
               var filePath = await Record().stop();
+              timer?.cancel();
+              timer = null;
+              startTime = null;
+              recordDuration = "00:00";
               AudioState.files.add(filePath!);
               Globals.audioListKey.currentState!
                   .insertItem(AudioState.files.length - 1);
@@ -178,9 +183,6 @@ class _RecordButtonState extends State<RecordButton> {
               setState(() {
                 isLocked = false;
               });
-              startTime = null;
-              recordDuration = "00:00";
-              timer?.cancel();
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -231,9 +233,11 @@ class _RecordButtonState extends State<RecordButton> {
         widget.controller.reverse();
 
         if (isCancelled(details.localPosition)) {
+          timer?.cancel();
+          timer = null;
           startTime = null;
           recordDuration = "00:00";
-          timer?.cancel();
+
           debugPrint("Cancelled recording");
           var filePath = await record.stop();
           debugPrint(filePath);
@@ -245,9 +249,11 @@ class _RecordButtonState extends State<RecordButton> {
             isLocked = true;
           });
         } else {
+          timer?.cancel();
+          timer = null;
           startTime = null;
           recordDuration = "00:00";
-          timer?.cancel();
+
           var filePath = await Record().stop();
           AudioState.files.add(filePath!);
           Globals.audioListKey.currentState!
