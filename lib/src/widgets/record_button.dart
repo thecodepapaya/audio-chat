@@ -5,7 +5,6 @@ import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 
 class RecordButton extends StatefulWidget {
@@ -200,8 +199,8 @@ class _RecordButtonState extends State<RecordButton> {
         if (await Record().hasPermission()) {
           record = Record();
           await record.start(
-            path: (await getApplicationDocumentsDirectory()).path +
-                "/audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
+            path: Globals.documentPath +
+                "audio_${DateTime.now().millisecondsSinceEpoch}.m4a",
             encoder: AudioEncoder.AAC,
             bitRate: 128000,
             samplingRate: 44100,

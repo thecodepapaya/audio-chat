@@ -1,8 +1,11 @@
+import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/routes.dart';
 import 'package:audio_chat/src/theme.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Globals.init();
   runApp(const MyApp());
 }
 

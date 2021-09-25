@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/audio_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
 
 class AudioList extends StatelessWidget {
   const AudioList({Key? key}) : super(key: key);
@@ -31,7 +31,7 @@ class AudioList extends StatelessWidget {
   }
 
   Future<List<FileSystemEntity>> fetchAudioFiles() async {
-    String dirPath = (await getApplicationDocumentsDirectory()).path + "/";
+    String dirPath = Globals.documentPath;
     List<FileSystemEntity> file = Directory(dirPath).listSync();
     file.removeWhere((element) => !element.path.endsWith("m4a"));
     file = file.reversed.toList();

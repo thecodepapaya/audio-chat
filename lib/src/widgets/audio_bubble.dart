@@ -23,8 +23,12 @@ class _AudioBubbleState extends State<AudioBubble> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    duration = await player.setFilePath(widget.filepath);
-    debugPrint("File Duration: ${duration!.inMilliseconds}");
+    player.setFilePath(widget.filepath).then((value) {
+      setState(() {
+        duration = value;
+        debugPrint("File Duration: ${duration!.inMilliseconds}");
+      });
+    });
   }
 
   @override
@@ -43,55 +47,89 @@ class _AudioBubbleState extends State<AudioBubble> {
                 borderRadius: BorderRadius.circular(Globals.borderRadius),
                 color: Colors.black,
               ),
-              child: Row(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  StreamBuilder<PlayerState>(
-                    stream: player.playerStateStream,
-                    builder: (context, snapshot) {
-                      final playerState = snapshot.data;
-                      final processingState = playerState?.processingState;
-                      final playing = playerState?.playing;
-                      if (processingState == ProcessingState.loading ||
-                          processingState == ProcessingState.buffering) {
-                        return GestureDetector(
-                          child: const Icon(Icons.play_arrow),
-                          onTap: player.play,
-                        );
-                      } else if (playing != true) {
-                        return GestureDetector(
-                          child: const Icon(Icons.play_arrow),
-                          onTap: player.play,
-                        );
-                      } else if (processingState != ProcessingState.completed) {
-                        return GestureDetector(
-                          child: const Icon(Icons.pause),
-                          onTap: player.pause,
-                        );
-                      } else {
-                        return GestureDetector(
-                          child: const Icon(Icons.replay),
-                          onTap: () {
-                            player.seek(Duration.zero);
+                  // const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      StreamBuilder<PlayerState>(
+                        stream: player.playerStateStream,
+                        builder: (context, snapshot) {
+                          final playerState = snapshot.data;
+                          final processingState = playerState?.processingState;
+                          final playing = playerState?.playing;
+                          if (processingState == ProcessingState.loading ||
+                              processingState == ProcessingState.buffering) {
+                            return GestureDetector(
+                              child: const Icon(Icons.play_arrow),
+                              onTap: player.play,
+                            );
+                          } else if (playing != true) {
+                            return GestureDetector(
+                              child: const Icon(Icons.play_arrow),
+                              onTap: player.play,
+                            );
+                          } else if (processingState !=
+                              ProcessingState.completed) {
+                            return GestureDetector(
+                              child: const Icon(Icons.pause),
+                              onTap: player.pause,
+                            );
+                          } else {
+                            return GestureDetector(
+                              child: const Icon(Icons.replay),
+                              onTap: () {
+                                player.seek(Duration.zero);
+                              },
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: StreamBuilder<Duration>(
+                          stream: player.positionStream,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasData) {
+                              return Column(
+                                children: [
+                                  const SizedBox(height: 4),
+                                  LinearProgressIndicator(
+                                    value: snapshot.data!.inMilliseconds /
+                                        (duration?.inMilliseconds ?? 1),
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        prettyDuration(
+                                            snapshot.data ?? Duration.zero),
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      const Text(
+                                        "M4A",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return const LinearProgressIndicator();
+                            }
                           },
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: StreamBuilder<Duration>(
-                      stream: player.positionStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return LinearProgressIndicator(
-                            value: snapshot.data!.inMilliseconds /
-                                (duration?.inMilliseconds ?? 1),
-                          );
-                        } else {
-                          return const LinearProgressIndicator();
-                        }
-                      },
-                    ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -100,5 +138,11 @@ class _AudioBubbleState extends State<AudioBubble> {
         ],
       ),
     );
+  }
+
+  String prettyDuration(Duration d) {
+    var min = d.inMinutes < 10 ? "0${d.inMinutes}" : d.inMinutes.toString();
+    var sec = d.inSeconds < 10 ? "0${d.inSeconds}" : d.inSeconds.toString();
+    return min + ":" + sec;
   }
 }
