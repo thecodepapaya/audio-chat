@@ -47,4 +47,4 @@ jobs:
           tag: ${{ env.APP_VERSION }}
           name: ${{ env.APP_VERSION }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: 'build/web/web-app.zip'
+          artifacts: 'build/app/outputs/flutter-apk/app-release.apk'
