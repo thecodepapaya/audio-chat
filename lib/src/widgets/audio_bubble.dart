@@ -11,33 +11,13 @@ class AudioBubble extends StatefulWidget {
   State<AudioBubble> createState() => _AudioBubbleState();
 }
 
-class _AudioBubbleState extends State<AudioBubble>
-    with SingleTickerProviderStateMixin {
+class _AudioBubbleState extends State<AudioBubble> {
   final player = AudioPlayer();
   Duration? duration;
-  late AnimationController controller;
-  late Animation<double> animation;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: controller, curve: Curves.ease),
-    );
-    controller.addListener(() {
-      // if (controller.isCompleted) {
-      //   controller.reset();
-      //   player.seek(Duration.zero);
-      // }
-      debugPrint("${player.currentIndex}");
-      debugPrint("${player.duration!.inMilliseconds}");
-      debugPrint("${player.position.inMilliseconds}");
-      setState(() {});
-    });
   }
 
   @override
@@ -65,24 +45,37 @@ class _AudioBubbleState extends State<AudioBubble>
               ),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      if (controller.status == AnimationStatus.dismissed) {
-                        controller.forward();
-                        player.play();
-                      } else if (controller.status ==
-                          AnimationStatus.completed) {
-                        controller.reset();
-                        player.seek(Duration.zero);
-                      } else if (controller.status == AnimationStatus.forward) {
-                        player.pause();
-                        controller.reverse();
+                  StreamBuilder<PlayerState>(
+                    stream: player.playerStateStream,
+                    builder: (context, snapshot) {
+                      final playerState = snapshot.data;
+                      final processingState = playerState?.processingState;
+                      final playing = playerState?.playing;
+                      if (processingState == ProcessingState.loading ||
+                          processingState == ProcessingState.buffering) {
+                        return GestureDetector(
+                          child: const Icon(Icons.play_arrow),
+                          onTap: player.play,
+                        );
+                      } else if (playing != true) {
+                        return GestureDetector(
+                          child: const Icon(Icons.play_arrow),
+                          onTap: player.play,
+                        );
+                      } else if (processingState != ProcessingState.completed) {
+                        return GestureDetector(
+                          child: const Icon(Icons.pause),
+                          onTap: player.pause,
+                        );
+                      } else {
+                        return GestureDetector(
+                          child: const Icon(Icons.replay),
+                          onTap: () {
+                            player.seek(Duration.zero);
+                          },
+                        );
                       }
                     },
-                    child: AnimatedIcon(
-                      icon: AnimatedIcons.play_pause,
-                      progress: animation,
-                    ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
