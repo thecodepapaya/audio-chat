@@ -79,9 +79,18 @@ class _AudioBubbleState extends State<AudioBubble> {
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: LinearProgressIndicator(
-                      value: player.position.inMilliseconds /
-                          (duration?.inMilliseconds ?? 1),
+                    child: StreamBuilder<Duration>(
+                      stream: player.positionStream,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return LinearProgressIndicator(
+                            value: snapshot.data!.inMilliseconds /
+                                (duration?.inMilliseconds ?? 1),
+                          );
+                        } else {
+                          return const LinearProgressIndicator();
+                        }
+                      },
                     ),
                   ),
                 ],
