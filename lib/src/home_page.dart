@@ -35,6 +35,9 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Audio Chat"),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(Globals.defaultPadding),
         child: Column(

@@ -12,10 +12,14 @@ class AudioList extends StatefulWidget {
 }
 
 class _AudioListState extends State<AudioList> {
+  List<FileSystemEntity> data = [];
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<FileSystemEntity>>(
+      key: const ValueKey("futureBuilder"),
       future: fetchAudioFiles(),
+      initialData: data,
       builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
         if (snapshot.connectionState == ConnectionState.active ||
             snapshot.connectionState == ConnectionState.waiting) {
@@ -24,12 +28,17 @@ class _AudioListState extends State<AudioList> {
           );
         }
         if (snapshot.hasData) {
+          data = snapshot.data!;
           return ListView.builder(
+            key: const ValueKey("ListBuilder"),
             reverse: true,
             padding: const EdgeInsets.symmetric(vertical: 15),
             itemCount: snapshot.data?.length,
             itemBuilder: (BuildContext context, int index) {
-              return AudioBubble(filepath: snapshot.data![index].path);
+              return AudioBubble(
+                filepath: snapshot.data![index].path,
+                key: ValueKey(snapshot.data![index].path),
+              );
             },
           );
         } else {
