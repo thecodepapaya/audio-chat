@@ -187,6 +187,7 @@ class _RecordButtonState extends State<RecordButton> {
           debugPrint("Locked recording");
         } else {
           var filePath = await Record().stop();
+          Globals.audioListKey.currentState!.setState(() {});
           debugPrint(filePath);
         }
       },

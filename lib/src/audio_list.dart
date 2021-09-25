@@ -4,14 +4,25 @@ import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/audio_bubble.dart';
 import 'package:flutter/material.dart';
 
-class AudioList extends StatelessWidget {
+class AudioList extends StatefulWidget {
   const AudioList({Key? key}) : super(key: key);
 
+  @override
+  State<AudioList> createState() => _AudioListState();
+}
+
+class _AudioListState extends State<AudioList> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<FileSystemEntity>>(
       future: fetchAudioFiles(),
       builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.active ||
+            snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         if (snapshot.hasData) {
           return ListView.builder(
             reverse: true,

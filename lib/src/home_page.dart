@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage>
         padding: const EdgeInsets.all(Globals.defaultPadding),
         child: Column(
           children: [
-            const Expanded(child: AudioList()),
+            Expanded(child: AudioList(key: Globals.audioListKey)),
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [

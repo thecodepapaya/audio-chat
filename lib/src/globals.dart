@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
 class Globals {
@@ -10,4 +11,5 @@ class Globals {
   static const double borderRadius = 27;
   static const double defaultPadding = 8;
   static String documentPath = '';
+  static GlobalKey audioListKey = GlobalKey();
 }
