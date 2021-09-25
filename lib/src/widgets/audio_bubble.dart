@@ -18,17 +18,16 @@ class _AudioBubbleState extends State<AudioBubble> {
   @override
   void initState() {
     super.initState();
+    player.setFilePath(widget.filepath).then((value) {
+      setState(() {
+        duration = value;
+      });
+    });
   }
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    player.setFilePath(widget.filepath).then((value) {
-      setState(() {
-        duration = value;
-        debugPrint("File Duration: ${duration!.inMilliseconds}");
-      });
-    });
   }
 
   @override

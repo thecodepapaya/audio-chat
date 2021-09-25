@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audio_chat/src/audio_state.dart';
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/audio_bubble.dart';
 import 'package:flutter/material.dart';
@@ -15,37 +16,23 @@ class _AudioListState extends State<AudioList> {
   List<FileSystemEntity> data = [];
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<FileSystemEntity>>(
-      key: const ValueKey("futureBuilder"),
-      future: fetchAudioFiles(),
-      initialData: data,
-      builder: (context, AsyncSnapshot<List<FileSystemEntity>> snapshot) {
-        if (snapshot.connectionState == ConnectionState.active ||
-            snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        if (snapshot.hasData) {
-          data = snapshot.data!;
-          return ListView.builder(
-            key: const ValueKey("ListBuilder"),
-            reverse: true,
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            itemCount: snapshot.data?.length,
-            itemBuilder: (BuildContext context, int index) {
-              return AudioBubble(
-                filepath: snapshot.data![index].path,
-                key: ValueKey(snapshot.data![index].path),
-              );
-            },
-          );
-        } else {
-          return const Center(
-            child: Text("No Audio files"),
-          );
-        }
+    return AnimatedList(
+      padding: const EdgeInsets.symmetric(vertical: 15),
+      key: Globals.audioListKey,
+      itemBuilder: (context, index, animation) {
+        return FadeTransition(
+          opacity: animation,
+          child: AudioBubble(
+            filepath: AudioState.files[index],
+            key: ValueKey(AudioState.files[index]),
+          ),
+        );
       },
     );
   }

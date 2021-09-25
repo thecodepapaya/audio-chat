@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_chat/src/audio_state.dart';
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
@@ -187,7 +188,9 @@ class _RecordButtonState extends State<RecordButton> {
           debugPrint("Locked recording");
         } else {
           var filePath = await Record().stop();
-          Globals.audioListKey.currentState!.setState(() {});
+          AudioState.files.add(filePath!);
+          Globals.audioListKey.currentState!
+              .insertItem(AudioState.files.length - 1);
           debugPrint(filePath);
         }
       },
