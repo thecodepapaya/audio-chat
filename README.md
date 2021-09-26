@@ -28,10 +28,9 @@ cd audio_chat
 flutter run
 ```
 ## Gif
-
-<img src="https://user-images.githubusercontent.com/42690541/134801914-712ffb9b-63fd-4b42-b892-62bc278f18b0.gif" height=400/> 
-<img src="https://user-images.githubusercontent.com/42690541/134801915-d5a00d10-35ee-4fb4-8a48-33e441146e02.gif" height=400/> 
-<img src="https://user-images.githubusercontent.com/42690541/134801920-da7402bf-e97d-4153-9123-92e859d09fb4.gif" height=400/> 
+|Record|Lock|Cancel|
+|---|---|---|
+|<img src="https://user-images.githubusercontent.com/42690541/134801914-712ffb9b-63fd-4b42-b892-62bc278f18b0.gif" height=400/>|<img src="https://user-images.githubusercontent.com/42690541/134801915-d5a00d10-35ee-4fb4-8a48-33e441146e02.gif" height=400/>|<img src="https://user-images.githubusercontent.com/42690541/134801920-da7402bf-e97d-4153-9123-92e859d09fb4.gif" height=400/>|
 
 ## Releases
 
