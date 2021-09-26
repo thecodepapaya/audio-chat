@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
     controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: const Duration(milliseconds: 600),
     );
   }
 

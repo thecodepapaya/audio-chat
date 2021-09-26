@@ -5,6 +5,7 @@ import 'package:audio_chat/src/audio_state.dart';
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:record/record.dart';
 
@@ -60,7 +61,7 @@ class _RecordButtonState extends State<RecordButton> {
             .animate(
       CurvedAnimation(
         parent: widget.controller,
-        curve: const Interval(0.4, 1, curve: Curves.easeIn),
+        curve: const Interval(0.2, 1, curve: Curves.easeIn),
       ),
     );
     lockerAnimation =
@@ -68,7 +69,7 @@ class _RecordButtonState extends State<RecordButton> {
             .animate(
       CurvedAnimation(
         parent: widget.controller,
-        curve: const Interval(0.2, 0.8, curve: Curves.elasticInOut),
+        curve: const Interval(0.2, 1, curve: Curves.easeIn),
       ),
     );
   }
@@ -143,8 +144,14 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisSize: MainAxisSize.max,
             children: [
               Text(recordDuration),
+              const SizedBox(width: size),
               FlowShader(
-                child: const Text("Slide to cancel"),
+                child: Row(
+                  children: const [
+                    Icon(Icons.keyboard_arrow_left),
+                    Text("Slide to cancel")
+                  ],
+                ),
                 duration: const Duration(seconds: 3),
                 flowColors: const [Colors.white, Colors.grey],
               ),
@@ -171,11 +178,13 @@ class _RecordButtonState extends State<RecordButton> {
           child: GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () async {
-              var filePath = await Record().stop();
+              Vibrate.feedback(FeedbackType.success);
               timer?.cancel();
               timer = null;
               startTime = null;
               recordDuration = "00:00";
+
+              var filePath = await Record().stop();
               AudioState.files.add(filePath!);
               Globals.audioListKey.currentState!
                   .insertItem(AudioState.files.length - 1);
@@ -232,7 +241,9 @@ class _RecordButtonState extends State<RecordButton> {
         debugPrint("onLongPressEnd");
         widget.controller.reverse();
 
-        if (isCancelled(details.localPosition)) {
+        if (isCancelled(details.localPosition, context)) {
+          Vibrate.feedback(FeedbackType.heavy);
+
           timer?.cancel();
           timer = null;
           startTime = null;
@@ -244,11 +255,15 @@ class _RecordButtonState extends State<RecordButton> {
           File(filePath!).delete();
           debugPrint("Deleted $filePath");
         } else if (checkIsLocked(details.localPosition)) {
+          Vibrate.feedback(FeedbackType.heavy);
           debugPrint("Locked recording");
+          debugPrint(details.localPosition.dy.toString());
           setState(() {
             isLocked = true;
           });
         } else {
+          Vibrate.feedback(FeedbackType.success);
+
           timer?.cancel();
           timer = null;
           startTime = null;
@@ -267,6 +282,7 @@ class _RecordButtonState extends State<RecordButton> {
       },
       onLongPress: () async {
         debugPrint("onLongPress");
+        Vibrate.feedback(FeedbackType.success);
         if (await Record().hasPermission()) {
           record = Record();
           await record.start(
@@ -277,7 +293,7 @@ class _RecordButtonState extends State<RecordButton> {
             samplingRate: 44100,
           );
           startTime = DateTime.now();
-          timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          timer = Timer.periodic(const Duration(seconds: 1), (_) {
             final minDur = DateTime.now().difference(startTime!).inMinutes;
             final secDur = DateTime.now().difference(startTime!).inSeconds % 60;
             String min = minDur < 10 ? "0$minDur" : minDur.toString();
@@ -292,10 +308,10 @@ class _RecordButtonState extends State<RecordButton> {
   }
 
   bool checkIsLocked(Offset offset) {
-    return (offset.dy < -85 && offset.dy > -135);
+    return (offset.dy < -35);
   }
 
-  bool isCancelled(Offset offset) {
-    return (offset.dx < -200);
+  bool isCancelled(Offset offset, BuildContext context) {
+    return (offset.dx < -(MediaQuery.of(context).size.width * 0.3));
   }
 }
