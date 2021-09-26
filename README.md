@@ -11,6 +11,8 @@ The project makes use of the following open source packages
 - [permission_handler](https://pub.dev/packages/permission_handler) - A package to handle audio/storage permissions from the user.
 - [path_provider](https://pub.dev/packages/path_provider) - path_provider provides path to application document and cache storage directories to store application specific data.
 - [record](https://pub.dev/packages/record) - Audio recorder from microphone to a given file path with multiple codecs, bit rate and sampling rate options.
+- [flutter_vibrate](https://pub.dev/packages/flutter_vibrate) - A simple plugin to control haptic feedback on iOS and android.
+- [lottie](https://pub.dev/packages/lottie) - To add lottie animation to the application.
 
 ## Build and run locally
 

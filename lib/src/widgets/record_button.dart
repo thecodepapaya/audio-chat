@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:audio_chat/src/audio_state.dart';
 import 'package:audio_chat/src/globals.dart';
 import 'package:audio_chat/src/widgets/flow_shader.dart';
+import 'package:audio_chat/src/widgets/lottie_animation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vibrate/flutter_vibrate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -35,7 +36,9 @@ class _RecordButtonState extends State<RecordButton> {
   Timer? timer;
   String recordDuration = "00:00";
   late Record record;
+
   bool isLocked = false;
+  bool showLottie = false;
 
   @override
   void initState() {
@@ -143,7 +146,7 @@ class _RecordButtonState extends State<RecordButton> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Text(recordDuration),
+              showLottie ? const LottieAnimation() : Text(recordDuration),
               const SizedBox(width: size),
               FlowShader(
                 child: Row(
@@ -239,7 +242,6 @@ class _RecordButtonState extends State<RecordButton> {
       },
       onLongPressEnd: (details) async {
         debugPrint("onLongPressEnd");
-        widget.controller.reverse();
 
         if (isCancelled(details.localPosition, context)) {
           Vibrate.feedback(FeedbackType.heavy);
@@ -249,12 +251,22 @@ class _RecordButtonState extends State<RecordButton> {
           startTime = null;
           recordDuration = "00:00";
 
-          debugPrint("Cancelled recording");
-          var filePath = await record.stop();
-          debugPrint(filePath);
-          File(filePath!).delete();
-          debugPrint("Deleted $filePath");
+          setState(() {
+            showLottie = true;
+          });
+
+          Timer(const Duration(milliseconds: 1440), () async {
+            widget.controller.reverse();
+            debugPrint("Cancelled recording");
+            var filePath = await record.stop();
+            debugPrint(filePath);
+            File(filePath!).delete();
+            debugPrint("Deleted $filePath");
+            showLottie = false;
+          });
         } else if (checkIsLocked(details.localPosition)) {
+          widget.controller.reverse();
+
           Vibrate.feedback(FeedbackType.heavy);
           debugPrint("Locked recording");
           debugPrint(details.localPosition.dy.toString());
@@ -262,6 +274,8 @@ class _RecordButtonState extends State<RecordButton> {
             isLocked = true;
           });
         } else {
+          widget.controller.reverse();
+
           Vibrate.feedback(FeedbackType.success);
 
           timer?.cancel();
@@ -312,6 +326,6 @@ class _RecordButtonState extends State<RecordButton> {
   }
 
   bool isCancelled(Offset offset, BuildContext context) {
-    return (offset.dx < -(MediaQuery.of(context).size.width * 0.3));
+    return (offset.dx < -(MediaQuery.of(context).size.width * 0.2));
   }
 }
